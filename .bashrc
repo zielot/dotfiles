@@ -11,6 +11,7 @@
 # --noprofile option may be used when the shell is started to inhibit
 # this behavior.
 
+
 # When a login shell exits, bash reads and  executes  commands  from  the
 # file ~/.bash_logout, if it exists. 
 
