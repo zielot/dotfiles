@@ -31,9 +31,9 @@ alias dot='ls .[a-zA-Z0-9_]*'
 alias alert='notify-send --urgency=low -i "$([ $? = 0 ] && echo terminal || echo error)" "$(history|tail -n1|sed -e '\''s/^\s*[0-9]\+\s*//;s/[;&|]\s*alert$//'\'')"'
 
 # emacs 
-#alias kems="emacsclient -e '(kill-emacs)'"
-#alias sems="/usr/bin/emacs --no-desktop --daemon"
-#alias killemacs="emacsclient -e '(shutdown-emacs-server)'"
+# alias kems="emacsclient -e '(kill-emacs)'"
+# alias sems="/usr/bin/emacs --no-desktop --daemon"
+# alias killemacs="emacsclient -e '(shutdown-emacs-server)'"
 
 #Nihongo MicroGnuEmacs
 #alias e="ng"
@@ -42,7 +42,7 @@ alias alert='notify-send --urgency=low -i "$([ $? = 0 ] && echo terminal || echo
 function gman() 
 {
     # this doesn't work: 
-    # [rayuela 38] Photography > gman file
+    # developer@kubuntuBox:~$ gman file
     # *ERROR*: WoMan can only format man pages written with the usual `-man' macros
     # Done displaying WoMan file.
 

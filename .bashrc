@@ -193,7 +193,6 @@ fi
 # kernel-building variables
 export DEBIAN_BUILDARCH=athlon-xp
 export PATCH_THE_KERNEL=AUTO
-# export CVSROOT=":ext:vand0046@cs2170-02.itlabs.umn.edu:/home/it11/vand0046/.cvsroot"
 
 
 # So let's do something
@@ -206,4 +205,9 @@ fi
 # this is the default prompt - might be slow. If too slow, use
 # fastprompt instead....
 powerprompt     
+
+
+# NVM - Node Version Manager
+. /opt/nvm/nvm.sh
+. /opt/nvm/bash_completion
 
