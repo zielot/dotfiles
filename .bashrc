@@ -190,11 +190,6 @@ if [ -f /etc/bash_completion ] && ! shopt -oq posix; then
     . /etc/bash_completion
 fi
 
-# kernel-building variables
-export DEBIAN_BUILDARCH=athlon-xp
-export PATCH_THE_KERNEL=AUTO
-
-
 # So let's do something
 echo -e "${CYAN}This is BASH ${RED}${BASH_VERSION%.*}${NC}\n"
 
