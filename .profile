@@ -8,6 +8,10 @@
 # for ssh logins, install and configure the libpam-umask package.
 #umask 022
 
+export CLICCOLOR=true
+export EDITOR="/usr/local/bin/mate -w"
+export PATH="/usr/local/share/python:$PATH"
+
 # if running bash
 if [ -n "$BASH_VERSION" ]; then
     # include .bashrc if it exists

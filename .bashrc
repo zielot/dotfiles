@@ -34,12 +34,26 @@ if [ -d ~/man ]; then
     export MANPATH
 fi
 
-#-----------------------------------
-# Source global definitions (if any)
-#-----------------------------------
+# Determine which OS we are running
+OS=`uname`
+KERNEL=`uname -r`
+MACH=`uname -m`
+echo -e "This is BASH ${BASH_VERSION%.*} on ${OS}\n"
 
-if [ -f /etc/bashrc ]; then
-    . /etc/bashrc   # --> Read /etc/bashrc, if present.
+#if [ "{$OS}" == "WindowsNT" ]; then
+#elif [ "{$OS}" == "Darwin" ]; then
+#elif [ "${OS}" = "SunOS" ] ; then
+#elif [ "${OS}" = "AIX" ] ; then
+
+if [ "${OS}" = "Linux" ] ; then
+	 
+	#-----------------------------------
+	# Source global definitions (if any)
+	#-----------------------------------
+
+	if [ -f /etc/bashrc ]; then
+	    . /etc/bashrc   # --> Read /etc/bashrc, if present.
+	fi
 fi
 
 # now override with customizations
@@ -112,12 +126,6 @@ shopt -s checkwinsize
 # make less more friendly for non-text input files, see lesspipe(1)
 [ -x /usr/bin/lesspipe ] && eval "$(SHELL=/bin/sh lesspipe)"
 
-# set variable identifying the chroot you work in (used in the prompt below)
-if [ -z "$debian_chroot" ] && [ -r /etc/debian_chroot ]; then
-    debian_chroot=$(cat /etc/debian_chroot)
-fi
-
-
 # enable en_US locale w/ utf-8 encodings if not already configured
 : ${LANG:="en_US.UTF-8"}
 : ${LANGUAGE:="en"}
@@ -125,66 +133,9 @@ fi
 : ${LC_ALL:="en_US.UTF-8"}
 export LANG LANGUAGE LC_CTYPE LC_ALL
 
-#---------------
-# Shell Prompt
-#---------------
-# Define some colors first:
-red='\e[0;31m'
-RED='\e[1;31m'
-blue='\e[0;34m'
-BLUE='\e[1;34m'
-cyan='\e[0;36m'
-CYAN='\e[1;36m'
-NC='\e[0m'              # No Color
-# --> Nice. Has the same effect as using "ansi.sys" in DOS.
-
-# original prompt
-PROMPT_COMMAND='echo -ne "\033]0;${USER}@${HOSTNAME}: ${PWD}\007"'
-
-#  --> Replace instances of \W with \w in prompt functions below
-#+ --> to get display of full path name.
-
-function fastprompt()
-{
-    unset PROMPT_COMMAND
-    case $TERM in
-        *term | *rxvt | mlterm )
-            PS1="${cyan}[\h]$NC \W > \[\033]0;\${TERM} [\u@\h] \w\007\]" ;;
-	linux )
-	    PS1="${cyan}[\h]$NC \W > " ;;
-        *)
-            PS1="[\h] \W > " ;;
-    esac
-}
-
-function powerprompt()
-{
-    _powerprompt()
-    {
-        LOAD=$(uptime|sed -e "s/.*: \([^,]*\).*/\1/" -e "s/ //g")
-    }
-
-    PROMPT_COMMAND=_powerprompt
-    case $TERM in
-        *term | *rxvt )
-            PS1="${cyan}[\A \$LOAD]$NC\n[\h \#] \W > \[\033]0;\${TERM} [\u@\h] \w\007\]" ;;
-        linux )
-            PS1="${cyan}[\A - \$LOAD]$NC\n[\h \#] \w > " ;;
-        * )
-            PS1="[\A - \$LOAD]\n[\h \#] \w > " ;;
-    esac
-}
-
-function apple_update_terminal_cwd() 
-{
-    # Identify the directory using a "file:" scheme URL,
-    # including the host name to disambiguate local vs.
-    # remote connections. Percent-escape spaces.
-	local SEARCH=' '
-	local REPLACE='%20'
-	local PWD_URL="file://$HOSTNAME${PWD//$SEARCH/$REPLACE}"
-	printf '\e]7;%s\a' "$PWD_URL"
-}
+# source ~/.shenv now if it exists
+test -r ~/.shenv &&
+. ~/.shenv
 
 # enable color support of ls and also add handy aliases
 if [ -x /usr/bin/dircolors ]; then
@@ -215,32 +166,90 @@ if [ -f /etc/bash_completion ] && ! shopt -oq posix; then
     . /etc/bash_completion
 fi
 
-# kernel-building variables
-# export DEBIAN_BUILDARCH=athlon-xp
-# export PATCH_THE_KERNEL=AUTO
-
-# source ~/.shenv now if it exists
-test -r ~/.shenv &&
-. ~/.shenv
-
-# So let's do something
-echo -e "${CYAN}This is BASH ${RED}${BASH_VERSION%.*}${NC}\n"
-
 if [ -x /usr/games/fortune ]; then
     /usr/games/fortune -s     # makes our day a bit more fun.... :-)
 fi
 
-if [ "$TERM_PROGRAM" == "Apple_Terminal" ] && [ -z "$INSIDE_EMACS" ]; then
-	export EDITOR="/usr/local/bin/mate -w"
-	export CLICCOLOR=true
-	export PATH=/usr/local/share/python:$PATH
-	PROMPT_COMMAND="apple_update_terminal_cwd; $PROMPT_COMMAND"
+# OS-specific settings
+if [ "{$OS}" == "Linux" ]; then
+	
+	# set variable identifying the chroot you work in (used in the prompt below)
+	if [ -z "$debian_chroot" ] && [ -r /etc/debian_chroot ]; then
+	    debian_chroot=$(cat /etc/debian_chroot)
+	fi
 
-else
+	#---------------
+	# Shell Prompt
+	#---------------
+	# Define some colors first:
+	red='\e[0;31m'
+	RED='\e[1;31m'
+	blue='\e[0;34m'
+	BLUE='\e[1;34m'
+	cyan='\e[0;36m'
+	CYAN='\e[1;36m'
+	NC='\e[0m'              # No Color
+	# --> Nice. Has the same effect as using "ansi.sys" in DOS.
+
+	# original prompt
+	PROMPT_COMMAND='echo -ne "\033]0;${USER}@${HOSTNAME}: ${PWD}\007"'
+
+	#  --> Replace instances of \W with \w in prompt functions below
+	#+ --> to get display of full path name.
+
+	function fastprompt()
+	{
+	    unset PROMPT_COMMAND
+	    case $TERM in
+	        *term | *rxvt | mlterm )
+	            PS1="${cyan}[\h]$NC \W > \[\033]0;\${TERM} [\u@\h] \w\007\]" ;;
+		linux )
+		    PS1="${cyan}[\h]$NC \W > " ;;
+	        *)
+	            PS1="[\h] \W > " ;;
+	    esac
+	}
+
+	function powerprompt()
+	{
+	    _powerprompt()
+	    {
+	        LOAD=$(uptime|sed -e "s/.*: \([^,]*\).*/\1/" -e "s/ //g")
+	    }
+
+	    PROMPT_COMMAND=_powerprompt
+	    case $TERM in
+	        *term | *rxvt )
+	            PS1="${cyan}[\A \$LOAD]$NC\n[\h \#] \W > \[\033]0;\${TERM} [\u@\h] \w\007\]" ;;
+	        linux )
+	            PS1="${cyan}[\A - \$LOAD]$NC\n[\h \#] \w > " ;;
+	        * )
+	            PS1="[\A - \$LOAD]\n[\h \#] \w > " ;;
+	    esac
+	}
 	
 	# this is the default prompt - might be slow. If too slow, use
 	# fastprompt instead....
 	unset color_prompt force_color_prompt
-	powerprompt     
+	powerprompt  
+
+elif [ "{$OS}" == "Darwin" ]; then
+		
+	function apple_update_terminal_cwd() 
+	{
+	    # Identify the directory using a "file:" scheme URL,
+	    # including the host name to disambiguate local vs.
+	    # remote connections. Percent-escape spaces.
+		local SEARCH=' '
+		local REPLACE='%20'
+		local PWD_URL="file://$HOSTNAME${PWD//$SEARCH/$REPLACE}"
+		printf '\e]7;%s\a' "$PWD_URL"
+	}
+
+	PS1='\h:\W \u\$ '
+
+	if [ "$TERM_PROGRAM" == "Apple_Terminal" ] && [ -z "$INSIDE_EMACS" ]; then
+		PROMPT_COMMAND="apple_update_terminal_cwd; $PROMPT_COMMAND"
+	fi
 
 fi
