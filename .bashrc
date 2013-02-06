@@ -15,7 +15,7 @@
 # file ~/.bash_logout, if it exists. 
 
 # If not running interactively, don't do anything
-[ -z "$PS1" ] && return
+# [ -z "$PS1" ] && return
 
 # set PATH so it includes user's private bin if it exists
 if [ -d ~/bin ] ; then
@@ -45,7 +45,7 @@ echo -e "This is BASH ${BASH_VERSION%.*} on ${OS}\n"
 #elif [ "${OS}" = "SunOS" ] ; then
 #elif [ "${OS}" = "AIX" ] ; then
 
-if [ "${OS}" = "Linux" ] ; then
+if [ "${OS}" == "Linux" ] ; then
 	 
 	#-----------------------------------
 	# Source global definitions (if any)
@@ -134,8 +134,7 @@ shopt -s checkwinsize
 export LANG LANGUAGE LC_CTYPE LC_ALL
 
 # source ~/.shenv now if it exists
-test -r ~/.shenv &&
-. ~/.shenv
+[ -r ~/.shenv ] && . ~/.shenv
 
 # enable color support of ls and also add handy aliases
 if [ -x /usr/bin/dircolors ]; then
@@ -164,14 +163,23 @@ fi
 # sources /etc/bash.bashrc).
 if [ -f /etc/bash_completion ] && ! shopt -oq posix; then
     . /etc/bash_completion
+
+elif [ -f /usr/local/etc/bash_completion ]; then
+	. /usr/local/etc/bash_completion
 fi
 
-if [ -x /usr/games/fortune ]; then
-    /usr/games/fortune -s     # makes our day a bit more fun.... :-)
+# add in git shell utilities for convenience
+[ -f ~/.git-completion.sh ] && . ~/.git-completion.sh
+
+# need to change PS1 to call $(__git_ps1 " (%s)") to take advantage of this
+# [ -f ~/.git-prompt.sh ] && . ~/.git-prompt.sh
+
+if [ -x `which fortune` ]; then
+    fortune -s     # makes our day a bit more fun.... :-)
 fi
 
 # OS-specific settings
-if [ "{$OS}" == "Linux" ]; then
+if [ "${OS}" == "Linux" ]; then
 	
 	# set variable identifying the chroot you work in (used in the prompt below)
 	if [ -z "$debian_chroot" ] && [ -r /etc/debian_chroot ]; then
@@ -233,7 +241,9 @@ if [ "{$OS}" == "Linux" ]; then
 	unset color_prompt force_color_prompt
 	powerprompt  
 
-elif [ "{$OS}" == "Darwin" ]; then
+elif [ "${OS}" == "Darwin" ]; then
+	
+	#echo "Setting Darwin-specific aliases ..."
 		
 	function apple_update_terminal_cwd() 
 	{
@@ -246,10 +256,16 @@ elif [ "{$OS}" == "Darwin" ]; then
 		printf '\e]7;%s\a' "$PWD_URL"
 	}
 
-	PS1='\h:\W \u\$ '
+	alias ls='ls -G'
+	alias ed='/usr/local/bin/mate -w'
+	alias ij='"/Applications/IntelliJ IDEA 12.app/Contents/MacOS/idea"'
+
+	PS1='\h:\W \u$ '
+
 
 	if [ "$TERM_PROGRAM" == "Apple_Terminal" ] && [ -z "$INSIDE_EMACS" ]; then
 		PROMPT_COMMAND="apple_update_terminal_cwd; $PROMPT_COMMAND"
 	fi
 
 fi
+
