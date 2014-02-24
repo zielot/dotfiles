@@ -9,6 +9,7 @@ alias clean='echo -n "Really clean this directory? ";
 	   echo "Not cleaned.";
 	fi'
 
+alias c='clear'
 alias du='du -kh'
 alias df='df -kTh'
 alias path='echo -e ${PATH//:/\\n}'
@@ -16,8 +17,16 @@ alias pu="pushd"
 alias po="popd"
 
 # job control
-alias h='history'
+# alias h='history'
+# process control
+h()
+{
+   history | grep $1 
+}
 alias j="jobs -l"
+
+alias now='date +"%T"'
+alias today='date +"%m/%d/%Y"'
 
 # ls aliases.
 alias ll='ls -l'
@@ -26,6 +35,19 @@ alias l='ls -ltrA'
 alias ll="ls -l"
 alias dot='ls .[a-zA-Z0-9_]*'
 
+## get rid of command not found ##
+alias cd..='cd ..'
+ 
+## a quick way to get out of current directory ##
+alias .='cd ..'
+alias ..='cd ../../'
+alias ...='cd ../../../'
+alias ....='cd ../../../../'
+alias .....='cd ../../../../..'
+alias .4='cd ../../../../'
+alias .5='cd ../../../../..'
+
+alias m='mount |column -t'
 # Add an "alert" alias for long running commands.  Use like so:
 #   sleep 10; alert
 alias alert='notify-send --urgency=low -i "$([ $? = 0 ] && echo terminal || echo error)" "$(history|tail -n1|sed -e '\''s/^\s*[0-9]\+\s*//;s/[;&|]\s*alert$//'\'')"'
@@ -229,3 +251,9 @@ unbold()
 {
     tput rmso
 }
+
+alias h=history=''
+alias h=history=''
+alias gittf=/opt/tfs-git/git-tf=''
+alias h=history=''
+alias h=history=''

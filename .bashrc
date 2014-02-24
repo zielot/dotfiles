@@ -17,28 +17,10 @@
 # If not running interactively, don't do anything
 # [ -z "$PS1" ] && return
 
-# set PATH so it includes user's private bin if it exists
-if [ -d ~/bin ] ; then
-    PATH=~/bin:"${PATH}"
-    export PATH
-fi
-
-if [ -d ~/lib ] ; then
-    PATH=~/lib:"${PATH}"
-    export PATH
-fi
-
-# do the same with MANPATH
-if [ -d ~/man ]; then
-    MANPATH=~/man:"${MANPATH}"
-    export MANPATH
-fi
-
 # Determine which OS we are running
 OS=`uname`
 KERNEL=`uname -r`
 MACH=`uname -m`
-echo -e "This is BASH ${BASH_VERSION%.*} on ${OS}\n"
 
 #if [ "{$OS}" == "WindowsNT" ]; then
 #elif [ "{$OS}" == "Darwin" ]; then
@@ -46,14 +28,14 @@ echo -e "This is BASH ${BASH_VERSION%.*} on ${OS}\n"
 #elif [ "${OS}" = "AIX" ] ; then
 
 if [ "${OS}" == "Linux" ] ; then
-	 
-	#-----------------------------------
-	# Source global definitions (if any)
-	#-----------------------------------
+    
+    #-----------------------------------
+    # Source global definitions (if any)
+    #-----------------------------------
 
-	if [ -f /etc/bashrc ]; then
-	    . /etc/bashrc   # --> Read /etc/bashrc, if present.
-	fi
+    if [ -f /etc/bashrc ]; then
+	. /etc/bashrc   # --> Read /etc/bashrc, if present.
+    fi
 fi
 
 # now override with customizations
@@ -165,7 +147,7 @@ if [ -f /etc/bash_completion ] && ! shopt -oq posix; then
     . /etc/bash_completion
 
 elif [ -f /usr/local/etc/bash_completion ]; then
-	. /usr/local/etc/bash_completion
+    . /usr/local/etc/bash_completion
 fi
 
 # add in git shell utilities for convenience
@@ -174,52 +156,56 @@ fi
 # need to change PS1 to call $(__git_ps1 " (%s)") to take advantage of this
 # [ -f ~/.git-prompt.sh ] && . ~/.git-prompt.sh
 
-if [ -x `which fortune` ]; then
-    fortune -s     # makes our day a bit more fun.... :-)
-fi
+if shopt -q login_shell; then
 
-# OS-specific settings
-if [ "${OS}" == "Linux" ]; then
-	
-	# set variable identifying the chroot you work in (used in the prompt below)
-	if [ -z "$debian_chroot" ] && [ -r /etc/debian_chroot ]; then
+    echo -e "This is BASH ${BASH_VERSION%.*} on ${OS}\n"
+
+    if [ -x `which fortune` ]; then
+        fortune -s     # makes our day a bit more fun.... :-)
+    fi
+
+    # OS-specific settings
+    if [ "${OS}" == "Linux" ]; then
+        
+        # set variable identifying the chroot you work in (used in the prompt below)
+        if [ -z "$debian_chroot" ] && [ -r /etc/debian_chroot ]; then
 	    debian_chroot=$(cat /etc/debian_chroot)
-	fi
+        fi
 
-	#---------------
-	# Shell Prompt
-	#---------------
-	# Define some colors first:
-	red='\e[0;31m'
-	RED='\e[1;31m'
-	blue='\e[0;34m'
-	BLUE='\e[1;34m'
-	cyan='\e[0;36m'
-	CYAN='\e[1;36m'
-	NC='\e[0m'              # No Color
-	# --> Nice. Has the same effect as using "ansi.sys" in DOS.
+        #---------------
+        # Shell Prompt
+        #---------------
+        # Define some colors first:
+        red='\e[0;31m'
+        RED='\e[1;31m'
+        blue='\e[0;34m'
+        BLUE='\e[1;34m'
+        cyan='\e[0;36m'
+        CYAN='\e[1;36m'
+        NC='\e[0m'              # No Color
+        # --> Nice. Has the same effect as using "ansi.sys" in DOS.
 
-	# original prompt
-	PROMPT_COMMAND='echo -ne "\033]0;${USER}@${HOSTNAME}: ${PWD}\007"'
+        # original prompt
+        PROMPT_COMMAND='echo -ne "\033]0;${USER}@${HOSTNAME}: ${PWD}\007"'
 
-	#  --> Replace instances of \W with \w in prompt functions below
-	#+ --> to get display of full path name.
+        #  --> Replace instances of \W with \w in prompt functions below
+        #+ --> to get display of full path name.
 
-	function fastprompt()
-	{
+        function fastprompt()
+        {
 	    unset PROMPT_COMMAND
 	    case $TERM in
 	        *term | *rxvt | mlterm )
 	            PS1="${cyan}[\h]$NC \W > \[\033]0;\${TERM} [\u@\h] \w\007\]" ;;
-		linux )
+	        linux )
 		    PS1="${cyan}[\h]$NC \W > " ;;
 	        *)
 	            PS1="[\h] \W > " ;;
 	    esac
-	}
+        }
 
-	function powerprompt()
-	{
+        function powerprompt()
+        {
 	    _powerprompt()
 	    {
 	        LOAD=$(uptime|sed -e "s/.*: \([^,]*\).*/\1/" -e "s/ //g")
@@ -234,38 +220,48 @@ if [ "${OS}" == "Linux" ]; then
 	        * )
 	            PS1="[\A - \$LOAD]\n[\h \#] \w > " ;;
 	    esac
-	}
-	
-	# this is the default prompt - might be slow. If too slow, use
-	# fastprompt instead....
-	unset color_prompt force_color_prompt
-	powerprompt  
+        }
+        
+        # this is the default prompt - might be slow. If too slow, use
+        # fastprompt instead....
+        unset color_prompt force_color_prompt
+        powerprompt  
 
-elif [ "${OS}" == "Darwin" ]; then
-	
-	#echo "Setting Darwin-specific aliases ..."
-		
-	function apple_update_terminal_cwd() 
-	{
+    elif [ "${OS}" == "Darwin" ]; then
+        
+        #echo "Setting Darwin-specific aliases ..."
+        # Perl DBD:mysql needs a little help and to be told to use the 64-bit version
+        # to match the 64-bit version of mysql and the 64-bin version of the module
+        export DYLD_LIBRARY_PATH="/usr/local/mysql/lib:$DYLD_LIBRARY_PATH"
+        export VERSIONER_PERL_PREFER_32_BIT=no
+        
+        export JAVA_HOME=`/usr/libexec/java_home -v 1.7`
+        export PATH="${JAVA_HOME}/bin:/usr/local/mysql/bin:${PATH}"
+        export CLASSPATH="${JAVA_HOME}/lib:${JAVA_HOME}/jre/lib"
+        
+        function apple_update_terminal_cwd() 
+        {
 	    # Identify the directory using a "file:" scheme URL,
 	    # including the host name to disambiguate local vs.
 	    # remote connections. Percent-escape spaces.
-		local SEARCH=' '
-		local REPLACE='%20'
-		local PWD_URL="file://$HOSTNAME${PWD//$SEARCH/$REPLACE}"
-		printf '\e]7;%s\a' "$PWD_URL"
-	}
+	    local SEARCH=' '
+	    local REPLACE='%20'
+	    local PWD_URL="file://$HOSTNAME${PWD//$SEARCH/$REPLACE}"
+	    printf '\e]7;%s\a' "$PWD_URL"
+        }
 
-	alias ls='ls -G'
-	alias ed='/usr/local/bin/mate -w'
-	alias ij='"/Applications/IntelliJ IDEA 12.app/Contents/MacOS/idea"'
+        alias ls='ls -G'
+        alias ed='/usr/local/bin/mate -w'
+        alias ij='"/Applications/IntelliJ IDEA 12.app/Contents/MacOS/idea"'
+        alias myip='ipconfig getifaddr en0'
 
-	PS1='\h:\W \u$ '
+        PS1='\h:\W \u$ '
 
 
-	if [ "$TERM_PROGRAM" == "Apple_Terminal" ] && [ -z "$INSIDE_EMACS" ]; then
-		PROMPT_COMMAND="apple_update_terminal_cwd; $PROMPT_COMMAND"
-	fi
+        if [ "$TERM_PROGRAM" == "Apple_Terminal" ] && [ -z "$INSIDE_EMACS" ]; then
+	    PROMPT_COMMAND="apple_update_terminal_cwd; $PROMPT_COMMAND"
+        fi
+
+    fi
 
 fi
-
