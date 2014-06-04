@@ -17,29 +17,28 @@
 # If not running interactively, don't do anything
 [ -z "$PS1" ] && return
 
-# set PATH so it includes user's private bin if it exists
-if [ -d ~/bin ] ; then
-    PATH=~/bin:"${PATH}"
-    export PATH
-fi
+# Determine which OS we are running
+OS=`uname`
+KERNEL=`uname -r`
+MACH=`uname -m`
 
-if [ -d ~/lib ] ; then
-    PATH=~/lib:"${PATH}"
-    export PATH
-fi
+#if [ "{$OS}" == "WindowsNT" ]; then
+#elif [ "{$OS}" == "Darwin" ]; then
+#elif [ "${OS}" = "SunOS" ] ; then
+#elif [ "${OS}" = "AIX" ] ; then
 
-# do the same with MANPATH
-if [ -d ~/man ]; then
-    MANPATH=~/man:"${MANPATH}"
-    export MANPATH
-fi
+if [ "${OS}" == "Linux" ] ; then
+    
+    #-----------------------------------
+    # Source global definitions (if any)
+    #-----------------------------------
 
-#-----------------------------------
-# Source global definitions (if any)
-#-----------------------------------
+    if [ -f /etc/bashrc ]; then
+	. /etc/bashrc   # --> Read /etc/bashrc, if present.
+    elif [ -f /etc/bash.bashrc ]; then
+        . /etc/bash.bashrc   # --> Read /etc/bashrc, if present.
+    fi
 
-if [ -f /etc/bashrc ]; then
-    . /etc/bashrc   # --> Read /etc/bashrc, if present.
 fi
 
 # now override with customizations
@@ -74,7 +73,6 @@ shopt -s interactive_comments >/dev/null 2>&1
 # before trying to execute it.  If a hashed command no longer exists,
 # a normal path search is performed.
 shopt -s checkhash
-shopt -s mailwarn
 shopt -s sourcepath
 shopt -s no_empty_cmd_completion  # bash>=2.04 only
 shopt -s cmdhist
@@ -89,21 +87,20 @@ HISTCONTROL=ignoredups:ignorespace
 HISTIGNORE="&:bg:fg:ll:ls:cd:fx:h"
 
 # histappend: append to the history file, don't overwrite it
-
 # histreedit: If readline is being used, and the histreedit shell option is
-# enabled, a failed history substitution will be reloaded into the
-# readline editing buffer for correction.
+#  enabled, a failed history substitution will be reloaded into the
+#  readline editing buffer for correction.
 
 # histverify: If the histverify shell option is enabled (see the
-# description of the shopt builtin below), and readline is being used,
-# history substitutions are not immediately passed to the shell
-# parser. Instead, the expanded line is reloaded into the readline
-# editing buffer for further modification.
+#  description of the shopt builtin below), and readline is being used,
+#  history substitutions are not immediately passed to the shell
+#  parser. Instead, the expanded line is reloaded into the readline
+#  editing buffer for further modification.
 shopt -s histappend histreedit histverify
 
 # for setting history length see HISTSIZE and HISTFILESIZE in bash(1)
-HISTSIZE=2000
-HISTFILESIZE=8000
+# HISTSIZE=2000
+# HISTFILESIZE=8000
 
 # check the window size after each command and, if necessary,
 # update the values of LINES and COLUMNS.
@@ -112,12 +109,6 @@ shopt -s checkwinsize
 # make less more friendly for non-text input files, see lesspipe(1)
 [ -x /usr/bin/lesspipe ] && eval "$(SHELL=/bin/sh lesspipe)"
 
-# set variable identifying the chroot you work in (used in the prompt below)
-if [ -z "$debian_chroot" ] && [ -r /etc/debian_chroot ]; then
-    debian_chroot=$(cat /etc/debian_chroot)
-fi
-
-
 # enable en_US locale w/ utf-8 encodings if not already configured
 : ${LANG:="en_US.UTF-8"}
 : ${LANGUAGE:="en"}
@@ -125,56 +116,8 @@ fi
 : ${LC_ALL:="en_US.UTF-8"}
 export LANG LANGUAGE LC_CTYPE LC_ALL
 
-#---------------
-# Shell Prompt
-#---------------
-# Define some colors first:
-red='\e[0;31m'
-RED='\e[1;31m'
-blue='\e[0;34m'
-BLUE='\e[1;34m'
-cyan='\e[0;36m'
-CYAN='\e[1;36m'
-NC='\e[0m'              # No Color
-# --> Nice. Has the same effect as using "ansi.sys" in DOS.
-
-# original prompt
-PROMPT_COMMAND='echo -ne "\033]0;${USER}@${HOSTNAME}: ${PWD}\007"'
-
-#  --> Replace instances of \W with \w in prompt functions below
-#+ --> to get display of full path name.
-
-function fastprompt()
-{
-    unset PROMPT_COMMAND
-    case $TERM in
-        *term | *rxvt | mlterm )
-            PS1="${cyan}[\h]$NC \W > \[\033]0;\${TERM} [\u@\h] \w\007\]" ;;
-	linux )
-	    PS1="${cyan}[\h]$NC \W > " ;;
-        *)
-            PS1="[\h] \W > " ;;
-    esac
-}
-
-function powerprompt()
-{
-    _powerprompt()
-    {
-        LOAD=$(uptime|sed -e "s/.*: \([^,]*\).*/\1/" -e "s/ //g")
-    }
-
-    PROMPT_COMMAND=_powerprompt
-    case $TERM in
-        *term | *rxvt )
-            PS1="${cyan}[\A \$LOAD]$NC\n[\h \#] \W > \[\033]0;\${TERM} [\u@\h] \w\007\]" ;;
-        linux )
-            PS1="${cyan}[\A - \$LOAD]$NC\n[\h \#] \w > " ;;
-        * )
-            PS1="[\A - \$LOAD]\n[\h \#] \w > " ;;
-    esac
-}
-
+# source ~/.shenv now if it exists
+[ -r ~/.shenv ] && . ~/.shenv
 
 # enable color support of ls and also add handy aliases
 if [ -x /usr/bin/dircolors ]; then
@@ -188,8 +131,6 @@ if [ -x /usr/bin/dircolors ]; then
     alias egrep='egrep --color=auto'
 fi
 
-
-unset color_prompt force_color_prompt
 
 # Alias definitions.
 # You may want to put all your additions into a separate file like
@@ -205,24 +146,129 @@ fi
 # sources /etc/bash.bashrc).
 if [ -f /etc/bash_completion ] && ! shopt -oq posix; then
     . /etc/bash_completion
+
+elif [ -f /usr/local/etc/bash_completion ]; then
+    . /usr/local/etc/bash_completion
 fi
 
 # kernel-building variables
 # export DEBIAN_BUILDARCH=athlon-xp
 # export PATCH_THE_KERNEL=AUTO
 
-# source ~/.shenv now if it exists
-test -r ~/.shenv &&
-. ~/.shenv
+# add in git shell utilities for convenience
+[ -f ~/.git-completion.sh ] && . ~/.git-completion.sh
 
 # So let's do something
 echo -e "${CYAN}This is BASH ${RED}${BASH_VERSION%.*}${NC}\n"
 
-if [ -x /usr/games/fortune ]; then
-    /usr/games/fortune -s     # makes our day a bit more fun.... :-)
-fi
+if shopt -q login_shell; then
 
-# this is the default prompt - might be slow. If too slow, use
-# fastprompt instead....
-powerprompt     
+    echo -e "This is BASH ${BASH_VERSION%.*} on ${OS}\n"
+
+    if [ -x `which fortune` ]; then
+        fortune -s     # makes our day a bit more fun.... :-)
+    fi
+
+    # OS-specific settings
+    if [ "${OS}" == "Linux" ]; then
+        
+        # set variable identifying the chroot you work in (used in the prompt below)
+        if [ -z "$debian_chroot" ] && [ -r /etc/debian_chroot ]; then
+	    debian_chroot=$(cat /etc/debian_chroot)
+        fi
+
+        #---------------
+        # Shell Prompt
+        #---------------
+        # Define some colors first:
+        red='\e[0;31m'
+        RED='\e[1;31m'
+        blue='\e[0;34m'
+        BLUE='\e[1;34m'
+        cyan='\e[0;36m'
+        CYAN='\e[1;36m'
+        NC='\e[0m'              # No Color
+        # --> Nice. Has the same effect as using "ansi.sys" in DOS.
+
+        # original prompt
+        PROMPT_COMMAND='echo -ne "\033]0;${USER}@${HOSTNAME}: ${PWD}\007"'
+
+        #  --> Replace instances of \W with \w in prompt functions below
+        #+ --> to get display of full path name.
+
+        function fastprompt()
+        {
+	    unset PROMPT_COMMAND
+	    case $TERM in
+	        *term | *rxvt | mlterm )
+	            PS1="${cyan}[\h]$NC \W > \[\033]0;\${TERM} [\u@\h] \w\007\]" ;;
+	        linux )
+		    PS1="${cyan}[\h]$NC \W > " ;;
+	        *)
+	            PS1="[\h] \W > " ;;
+	    esac
+        }
+
+        function powerprompt()
+        {
+	    _powerprompt()
+	    {
+	        LOAD=$(uptime|sed -e "s/.*: \([^,]*\).*/\1/" -e "s/ //g")
+	    }
+
+	    PROMPT_COMMAND=_powerprompt
+	    case $TERM in
+	        *term | *rxvt )
+	            PS1="${cyan}[\A \$LOAD]$NC\n[\h \#] \W > \[\033]0;\${TERM} [\u@\h] \w\007\]" ;;
+	        linux )
+	            PS1="${cyan}[\A - \$LOAD]$NC\n[\h \#] \w > " ;;
+	        * )
+	            PS1="[\A - \$LOAD]\n[\h \#] \w > " ;;
+	    esac
+        }
+        
+        # this is the default prompt - might be slow. If too slow, use
+        # fastprompt instead....
+        unset color_prompt force_color_prompt
+        powerprompt  
+
+    elif [ "${OS}" == "Darwin" ]; then
+        
+        #echo "Setting Darwin-specific aliases ..."
+        # Perl DBD:mysql needs a little help and to be told to use the 64-bit version
+        # to match the 64-bit version of mysql and the 64-bin version of the module
+        export DYLD_LIBRARY_PATH="/usr/local/mysql/lib:$DYLD_LIBRARY_PATH"
+        export VERSIONER_PERL_PREFER_32_BIT=no
+        
+        export JAVA_HOME=`/usr/libexec/java_home -v 1.7`
+        export PATH="${JAVA_HOME}/bin:/usr/local/mysql/bin:${PATH}"
+        export CLASSPATH="${JAVA_HOME}/lib:${JAVA_HOME}/jre/lib"
+        
+        function apple_update_terminal_cwd() 
+        {
+	    # Identify the directory using a "file:" scheme URL,
+	    # including the host name to disambiguate local vs.
+	    # remote connections. Percent-escape spaces.
+	    local SEARCH=' '
+	    local REPLACE='%20'
+	    local PWD_URL="file://$HOSTNAME${PWD//$SEARCH/$REPLACE}"
+	    printf '\e]7;%s\a' "$PWD_URL"
+        }
+
+        alias ls='ls -G'
+        alias ed='/usr/local/bin/mate -w'
+        alias ij='"/Applications/IntelliJ IDEA 12.app/Contents/MacOS/idea"'
+        alias myip='ipconfig getifaddr en0'
+
+        PS1='\h:\W \u$ '
+
+
+        if [ "$TERM_PROGRAM" == "Apple_Terminal" ] && [ -z "$INSIDE_EMACS" ]; then
+	    PROMPT_COMMAND="apple_update_terminal_cwd; $PROMPT_COMMAND"
+        fi
+
+    fi
+
+fi
+cd ~
 

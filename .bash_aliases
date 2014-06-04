@@ -9,15 +9,26 @@ alias clean='echo -n "Really clean this directory? ";
 	   echo "Not cleaned.";
 	fi'
 
+alias c='clear'
 alias du='du -kh'
 alias df='df -kTh'
 alias path='echo -e ${PATH//:/\\n}'
 alias pu="pushd"
 alias po="popd"
 
+h()
+{
+   cat ~/.bash_history | grep "$1" 
+}
+
+# alias h='history'
+
 # job control
-alias h='history'
+# process control
 alias j="jobs -l"
+
+alias now='date +"%m/%d/%Y %T"'
+alias today='date +"%m/%d/%Y"'
 
 # ls aliases.
 alias ll='ls -l'
@@ -26,9 +37,26 @@ alias l='ls -ltrA'
 alias ll="ls -l"
 alias dot='ls .[a-zA-Z0-9_]*'
 
+## get rid of command not found ##
+alias cd..='cd ..'
+ 
+## a quick way to get out of current directory ##
+alias .='cd ..'
+alias ..='cd ../../'
+alias ...='cd ../../../'
+alias ....='cd ../../../../'
+alias .....='cd ../../../../..'
+alias .4='cd ../../../../'
+alias .5='cd ../../../../..'
+
+alias m='mount |column -t'
+# Add an "alert" alias for long running commands.  Use like so:
+#   sleep 10; alert
+alias alert='notify-send --urgency=low -i "$([ $? = 0 ] && echo terminal || echo error)" "$(history|tail -n1|sed -e '\''s/^\s*[0-9]\+\s*//;s/[;&|]\s*alert$//'\'')"'
+
 # emacs 
-# alias kems="emacsclient -e '(kill-emacs)'"
-# alias sems="/usr/bin/emacs --no-desktop --daemon"
+alias kems="emacsclient -e '(kill-emacs)'"
+alias sems="/usr/bin/emacs --no-desktop --daemon"
 # alias killemacs="emacsclient -e '(shutdown-emacs-server)'"
 # Nihongo MicroGnuEmacs
 # alias e="ng"
@@ -38,7 +66,25 @@ alias dot='ls .[a-zA-Z0-9_]*'
 alias htmlencode="perl -MHTML::Entities -pe 'encode_entities($1)'"
 alias htmldecode="perl -MHTML::Entities -pe 'decode_entities($1)'"
 
-alias xo="xdg-open"
+alias open="xdg-open"
+
+alias open="xdg-open"
+
+function gman() 
+{
+    # this doesn't work: 
+    # developer@kubuntuBox:~$ gman file
+    # *ERROR*: WoMan can only format man pages written with the usual `-man' macros
+    # Done displaying WoMan file.
+
+    if /usr/bin/emacsclient -e "(woman \"$1\")"; then 
+        echo "Now displaying WoMan $1.";
+    # elif yelp 'man:$1'; then 
+    #     echo "Done displaying yelp \"man:$1.\""; 
+    else
+        man "$1";
+    fi 
+}
 
 # functions
 alias fx='declare -F'
@@ -225,3 +271,4 @@ unbold()
 {
     tput rmso
 }
+

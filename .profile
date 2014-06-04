@@ -8,6 +8,14 @@
 # for ssh logins, install and configure the libpam-umask package.
 #umask 022
 
+export CLICCOLOR=true
+
+# OS X
+# export EDITOR="/usr/local/bin/emacs"
+# export PATH="/usr/local/share/python:$PATH"
+# export GROOVY_HOME="/usr/local/opt/groovy/libexec"
+
+
 # if running bash
 if [ -n "$BASH_VERSION" ]; then
     # include .bashrc if it exists
@@ -16,7 +24,27 @@ if [ -n "$BASH_VERSION" ]; then
     fi
 fi
 
-# set PATH so it includes user's private bin if it exists
-if [ -d "$HOME/bin" ] ; then
-    PATH="$HOME/bin:$PATH"
+if [ -d /usr/local/bin ]; then
+    PATH=/usr/local/bin:/usr/local/sbin:"${PATH}";
 fi
+
+# set PATH so it includes user's private bin if it exists
+if [ -d ~/bin ] ; then
+    PATH=~/bin:"${PATH}"
+    export PATH
+fi
+
+if [ -d ~/lib ] ; then
+    PATH=~/lib:"${PATH}"
+    export PATH
+fi
+
+# do the same with MANPATH
+if [ -d ~/man ]; then
+    MANPATH=~/man:"${MANPATH}"
+    export MANPATH
+fi
+
+# OS X
+# export PATH=/Applications/B1FreeArchiver.app/Contents/MacOS:$PATH
+
