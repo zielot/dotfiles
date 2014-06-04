@@ -1,0 +1,33 @@
+(defun xml-pretty-print-region (start end)
+  (interactive "r")
+  (let ((cb (current-buffer))
+        (buf (get-buffer-create "*xml*")))
+    (set-buffer buf)
+    (erase-buffer)
+    (set-buffer cb)
+    (copy-to-buffer buf start end)
+
+    (switch-to-buffer-other-window buf)
+    (xml-mode)
+    (join-broken-lines (point-min) (point-max))
+    (sgml-pretty-print (point-min) (point-max))
+    (other-window -1)))
+
+(defconst cr (string ?\n))
+(defconst *broken-line-regex* cr)
+
+(defun join-broken-lines (start end)
+  (interactive "r")
+  (goto-char start)
+  (while (re-search-forward *broken-line-regex* end t)
+    (replace-match "" nil nil)))
+
+(defun xml-pretty-print-current ()
+  (interactive)
+  (save-excursion
+    (end-of-line nil)
+    (re-search-backward ">" 1)
+    (let ((e (+ 1 (point))))
+      (beginning-of-line nil)
+      (re-search-forward "<?xml[^>]*>" e)
+      (xml-pretty-print-region (point) e))))
