@@ -10,12 +10,6 @@
 
 export CLICCOLOR=true
 
-# OS X
-# export EDITOR="/usr/local/bin/emacs"
-# export PATH="/usr/local/share/python:$PATH"
-# export GROOVY_HOME="/usr/local/opt/groovy/libexec"
-
-
 # if running bash
 if [ -n "$BASH_VERSION" ]; then
     # include .bashrc if it exists
@@ -45,6 +39,17 @@ if [ -d ~/man ]; then
     export MANPATH
 fi
 
-# OS X
-# export PATH=/Applications/B1FreeArchiver.app/Contents/MacOS:$PATH
+# Determine which OS we are running
+OS=`uname`
+KERNEL=`uname -r`
+MACH=`uname -m`
+
+if [ "${OS}" == "Darwin" ]; then
+    # OS X
+    export EDITOR="/usr/local/bin/emacs"
+    export PATH="/usr/local/share/python:$PATH"
+    export GROOVY_HOME="/usr/local/opt/groovy/libexec"
+    export PATH=$PATH:/Applications/B1FreeArchiver.app/Contents/MacOS
+fi
+
 

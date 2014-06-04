@@ -73,6 +73,7 @@ shopt -s interactive_comments >/dev/null 2>&1
 # before trying to execute it.  If a hashed command no longer exists,
 # a normal path search is performed.
 shopt -s checkhash
+# shopt -s mailwarn
 shopt -s sourcepath
 shopt -s no_empty_cmd_completion  # bash>=2.04 only
 shopt -s cmdhist
@@ -158,8 +159,8 @@ fi
 # add in git shell utilities for convenience
 [ -f ~/.git-completion.sh ] && . ~/.git-completion.sh
 
-# So let's do something
-echo -e "${CYAN}This is BASH ${RED}${BASH_VERSION%.*}${NC}\n"
+# need to change PS1 to call $(__git_ps1 " (%s)") to take advantage of this
+# [ -f ~/.git-prompt.sh ] && . ~/.git-prompt.sh
 
 if shopt -q login_shell; then
 
@@ -270,5 +271,5 @@ if shopt -q login_shell; then
     fi
 
 fi
-cd ~
 
+cd ~
