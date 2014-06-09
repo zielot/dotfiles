@@ -1,4 +1,3 @@
-<<<<<<< HEAD
 ;;; utility - various utility functions assembled together for convenience
 
 ;;; Stefan Monnier <foo at acm.org>. It is the opposite of fill-paragraph
@@ -10,7 +9,7 @@
 
 ;; Handy key definition
 (define-key global-map "\M-Q" 'unfill-paragraph)
-=======
+
 ;;; utility --- set of utility functions that aren't stored in their own elisp
 ;;; Commentary:
 ;;; no comment
@@ -34,4 +33,4 @@ BEG and END (region to sort)."
                (format "^%s" (regexp-quote (car kill-ring))) nil t)
             (replace-match "" nil nil))
           (goto-char next-line))))))
->>>>>>> 43863a22218619aba9600df891bd1457c0f486d8
+
