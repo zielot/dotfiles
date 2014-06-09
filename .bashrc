@@ -15,7 +15,7 @@
 # file ~/.bash_logout, if it exists. 
 
 # If not running interactively, don't do anything
-# [ -z "$PS1" ] && return
+[ -z "$PS1" ] && return
 
 # Determine which OS we are running
 OS=`uname`
@@ -35,7 +35,10 @@ if [ "${OS}" == "Linux" ] ; then
 
     if [ -f /etc/bashrc ]; then
 	. /etc/bashrc   # --> Read /etc/bashrc, if present.
+    elif [ -f /etc/bash.bashrc ]; then
+        . /etc/bash.bashrc   # --> Read /etc/bashrc, if present.
     fi
+
 fi
 
 # now override with customizations
@@ -70,7 +73,7 @@ shopt -s interactive_comments >/dev/null 2>&1
 # before trying to execute it.  If a hashed command no longer exists,
 # a normal path search is performed.
 shopt -s checkhash
-shopt -s mailwarn
+# shopt -s mailwarn
 shopt -s sourcepath
 shopt -s no_empty_cmd_completion  # bash>=2.04 only
 shopt -s cmdhist
@@ -85,21 +88,20 @@ HISTCONTROL=ignoredups:ignorespace
 HISTIGNORE="&:bg:fg:ll:ls:cd:fx:h"
 
 # histappend: append to the history file, don't overwrite it
-
 # histreedit: If readline is being used, and the histreedit shell option is
-# enabled, a failed history substitution will be reloaded into the
-# readline editing buffer for correction.
+#  enabled, a failed history substitution will be reloaded into the
+#  readline editing buffer for correction.
 
 # histverify: If the histverify shell option is enabled (see the
-# description of the shopt builtin below), and readline is being used,
-# history substitutions are not immediately passed to the shell
-# parser. Instead, the expanded line is reloaded into the readline
-# editing buffer for further modification.
+#  description of the shopt builtin below), and readline is being used,
+#  history substitutions are not immediately passed to the shell
+#  parser. Instead, the expanded line is reloaded into the readline
+#  editing buffer for further modification.
 shopt -s histappend histreedit histverify
 
 # for setting history length see HISTSIZE and HISTFILESIZE in bash(1)
-HISTSIZE=2000
-HISTFILESIZE=8000
+# HISTSIZE=2000
+# HISTFILESIZE=8000
 
 # check the window size after each command and, if necessary,
 # update the values of LINES and COLUMNS.
@@ -149,6 +151,10 @@ if [ -f /etc/bash_completion ] && ! shopt -oq posix; then
 elif [ -f /usr/local/etc/bash_completion ]; then
     . /usr/local/etc/bash_completion
 fi
+
+# kernel-building variables
+# export DEBIAN_BUILDARCH=athlon-xp
+# export PATCH_THE_KERNEL=AUTO
 
 # add in git shell utilities for convenience
 [ -f ~/.git-completion.sh ] && . ~/.git-completion.sh
@@ -265,3 +271,5 @@ if shopt -q login_shell; then
     fi
 
 fi
+
+cd ~

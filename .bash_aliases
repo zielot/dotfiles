@@ -16,6 +16,20 @@ alias path='echo -e ${PATH//:/\\n}'
 alias pu="pushd"
 alias po="popd"
 
+<<<<<<< HEAD
+h()
+{
+   cat ~/.bash_history | grep "$1" 
+}
+
+# alias h='history'
+
+# job control
+# process control
+alias j="jobs -l"
+
+alias now='date +"%m/%d/%Y %T"'
+=======
 # job control
 # alias h='history'
 # process control
@@ -26,6 +40,7 @@ h()
 alias j="jobs -l"
 
 alias now='date +"%T"'
+>>>>>>> 43863a22218619aba9600df891bd1457c0f486d8
 alias today='date +"%m/%d/%Y"'
 
 # ls aliases.
@@ -53,6 +68,22 @@ alias m='mount |column -t'
 alias alert='notify-send --urgency=low -i "$([ $? = 0 ] && echo terminal || echo error)" "$(history|tail -n1|sed -e '\''s/^\s*[0-9]\+\s*//;s/[;&|]\s*alert$//'\'')"'
 
 # emacs 
+<<<<<<< HEAD
+alias kems="emacsclient -e '(kill-emacs)'"
+alias sems="/usr/bin/emacs --no-desktop --daemon"
+# alias killemacs="emacsclient -e '(shutdown-emacs-server)'"
+# Nihongo MicroGnuEmacs
+# alias e="ng"
+# alias e="openwithemacs"
+
+# These don't work, yet
+alias htmlencode="perl -MHTML::Entities -pe 'encode_entities($1)'"
+alias htmldecode="perl -MHTML::Entities -pe 'decode_entities($1)'"
+
+alias open="xdg-open"
+
+alias open="xdg-open"
+=======
 # alias kems="emacsclient -e '(kill-emacs)'"
 # alias sems="/usr/bin/emacs --no-desktop --daemon"
 # alias killemacs="emacsclient -e '(shutdown-emacs-server)'"
@@ -60,6 +91,7 @@ alias alert='notify-send --urgency=low -i "$([ $? = 0 ] && echo terminal || echo
 #Nihongo MicroGnuEmacs
 #alias e="ng"
 #alias e="openwithemacs"
+>>>>>>> 43863a22218619aba9600df891bd1457c0f486d8
 
 function gman() 
 {
@@ -77,13 +109,32 @@ function gman()
     fi 
 }
 
+<<<<<<< HEAD
+=======
 alias xo="xdg-open"
 
+>>>>>>> 43863a22218619aba9600df891bd1457c0f486d8
 # functions
 alias fx='declare -F'
 
 # Csh compatability:
 alias unsetenv=unset
+<<<<<<< HEAD
+
+function kman()
+{
+  echo "khelpcenter man:/$1"
+  khelpcenter man:/$1 
+}
+
+function kinfo()
+{
+  echo "khelpcenter info:/$1"
+  khelpcenter info:/$1
+}
+
+=======
+>>>>>>> 43863a22218619aba9600df891bd1457c0f486d8
 function setenv()
 {
     if [ $# -ne 2 ] ; then
@@ -252,8 +303,11 @@ unbold()
     tput rmso
 }
 
+<<<<<<< HEAD
+=======
 alias h=history=''
 alias h=history=''
 alias gittf=/opt/tfs-git/git-tf=''
 alias h=history=''
 alias h=history=''
+>>>>>>> 43863a22218619aba9600df891bd1457c0f486d8

@@ -9,10 +9,6 @@
 #umask 022
 
 export CLICCOLOR=true
-export EDITOR="/usr/local/bin/emacs"
-export PATH="/usr/local/share/python:$PATH"
-export GROOVY_HOME="/usr/local/opt/groovy/libexec"
-
 
 # if running bash
 if [ -n "$BASH_VERSION" ]; then
@@ -42,8 +38,18 @@ if [ -d ~/man ]; then
     MANPATH=~/man:"${MANPATH}"
     export MANPATH
 fi
-export PATH=$PATH:/Applications/B1FreeArchiver.app/Contents/MacOS
 
+# Determine which OS we are running
+OS=`uname`
+KERNEL=`uname -r`
+MACH=`uname -m`
 
-export PATH=/Applications/B1FreeArchiver.app/Contents/MacOS:$PATH
+if [ "${OS}" == "Darwin" ]; then
+    # OS X
+    export EDITOR="/usr/local/bin/emacs"
+    export PATH="/usr/local/share/python:$PATH"
+    export GROOVY_HOME="/usr/local/opt/groovy/libexec"
+    export PATH=$PATH:/Applications/B1FreeArchiver.app/Contents/MacOS
+fi
+
 
