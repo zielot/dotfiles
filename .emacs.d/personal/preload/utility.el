@@ -33,4 +33,4 @@ BEG and END (region to sort)."
 ;; Handy key definition
 (define-key global-map "\M-Q" 'unfill-paragraph)
 
-(provide 'utility)\n;;; utility.el ends here
+(provide 'utility);;; utility.el ends here

@@ -25,13 +25,14 @@
 (global-set-key [(meta shift right)] 'tabbar-forward)
 
 ;;; Customizations
-;; OS X server customizations
-(defun ns-raise-emacs ()
-  (ns-do-applescript "tell application \"Emacs\" to activate"))
-(ns-raise-emacs)
-(add-hook 'server-visit-hook 'raise-frame)
-(add-hook 'server-visit-hook 'ns-raise-emacs)
-
+(when (eq system-type 'darwin)
+  ;; OS X server customizations
+  (defun ns-raise-emacs ()
+    (ns-do-applescript "tell application \"Emacs\" to activate"))
+  (ns-raise-emacs)
+  (add-hook 'server-visit-hook 'raise-frame)
+  (add-hook 'server-visit-hook 'ns-raise-emacs)
+)
 ;; The variable redisplay-dont-pause, when set to t, will cause Emacs
 ;; to fully redraw the display before it processes queued input
 ;; events. This may have slight performance implications if you’re
