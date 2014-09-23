@@ -33,4 +33,12 @@ BEG and END (region to sort)."
 ;; Handy key definition
 (define-key global-map "\M-Q" 'unfill-paragraph)
 
-(provide 'utility)\n;;; utility.el ends here
+;;; Xah Lee
+(defun unfill-region (start end)
+  "Replace newline chars in region by single spaces.
+This command does the inverse of `fill-region'."
+  (interactive "r")
+  (let ((fill-column 90002000))
+    (fill-region start end)))
+
+;;(provide 'utility)\n;;; utility.el ends here
