@@ -1,4 +1,5 @@
 # Some useful aliases.
+
 alias texclean='rm -f *.toc *.aux *.log *.cp *.fn *.tp *.vr *.pg *.ky'
 alias clean='echo -n "Really clean this directory? ";
 	read yorn;
@@ -16,7 +17,6 @@ alias path='echo -e ${PATH//:/\\n}'
 alias pu="pushd"
 alias po="popd"
 
-<<<<<<< HEAD
 h()
 {
    cat ~/.bash_history | grep "$1" 
@@ -27,21 +27,6 @@ h()
 # job control
 # process control
 alias j="jobs -l"
-
-alias now='date +"%m/%d/%Y %T"'
-=======
-# job control
-# alias h='history'
-# process control
-h()
-{
-   history | grep $1 
-}
-alias j="jobs -l"
-
-alias now='date +"%T"'
->>>>>>> 43863a22218619aba9600df891bd1457c0f486d8
-alias today='date +"%m/%d/%Y"'
 
 # ls aliases.
 alias ll='ls -l'
@@ -62,15 +47,18 @@ alias .....='cd ../../../../..'
 alias .4='cd ../../../../'
 alias .5='cd ../../../../..'
 
+alias ts='date +"%Y%m%d%H%M%S"'
+alias ds='date +"%Y%m%d"'
+
 alias m='mount |column -t'
 # Add an "alert" alias for long running commands.  Use like so:
 #   sleep 10; alert
 alias alert='notify-send --urgency=low -i "$([ $? = 0 ] && echo terminal || echo error)" "$(history|tail -n1|sed -e '\''s/^\s*[0-9]\+\s*//;s/[;&|]\s*alert$//'\'')"'
 
+# Csh compatability:
+alias unsetenv=unset
+
 # emacs 
-<<<<<<< HEAD
-alias kems="emacsclient -e '(kill-emacs)'"
-alias sems="/usr/bin/emacs --no-desktop --daemon"
 # alias killemacs="emacsclient -e '(shutdown-emacs-server)'"
 # Nihongo MicroGnuEmacs
 # alias e="ng"
@@ -80,10 +68,6 @@ alias sems="/usr/bin/emacs --no-desktop --daemon"
 alias htmlencode="perl -MHTML::Entities -pe 'encode_entities($1)'"
 alias htmldecode="perl -MHTML::Entities -pe 'decode_entities($1)'"
 
-alias open="xdg-open"
-
-alias open="xdg-open"
-=======
 # alias kems="emacsclient -e '(kill-emacs)'"
 # alias sems="/usr/bin/emacs --no-desktop --daemon"
 # alias killemacs="emacsclient -e '(shutdown-emacs-server)'"
@@ -91,8 +75,11 @@ alias open="xdg-open"
 #Nihongo MicroGnuEmacs
 #alias e="ng"
 #alias e="openwithemacs"
->>>>>>> 43863a22218619aba9600df891bd1457c0f486d8
 
+# functions
+alias fx='declare -F'
+
+### Functions
 function gman() 
 {
     # this doesn't work: 
@@ -109,18 +96,6 @@ function gman()
     fi 
 }
 
-<<<<<<< HEAD
-=======
-alias xo="xdg-open"
-
->>>>>>> 43863a22218619aba9600df891bd1457c0f486d8
-# functions
-alias fx='declare -F'
-
-# Csh compatability:
-alias unsetenv=unset
-<<<<<<< HEAD
-
 function kman()
 {
   echo "khelpcenter man:/$1"
@@ -133,8 +108,6 @@ function kinfo()
   khelpcenter info:/$1
 }
 
-=======
->>>>>>> 43863a22218619aba9600df891bd1457c0f486d8
 function setenv()
 {
     if [ $# -ne 2 ] ; then
@@ -221,12 +194,12 @@ function dm()
 
 # apt aliases.
 alias dl="dpkg -L"
-ds()
+finddeb()
 {
     aptitude search "$1" | sort -u | less 
 }
 
-dp()
+showdeb()
 {
     dpkg -s "$1" || apt-cache show "$1"
 }
@@ -303,11 +276,4 @@ unbold()
     tput rmso
 }
 
-<<<<<<< HEAD
-=======
-alias h=history=''
-alias h=history=''
-alias gittf=/opt/tfs-git/git-tf=''
-alias h=history=''
-alias h=history=''
->>>>>>> 43863a22218619aba9600df891bd1457c0f486d8
+

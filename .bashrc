@@ -12,7 +12,7 @@
 # this behavior.
 
 # When a login shell exits, bash reads and  executes  commands  from  the
-# file ~/.bash_logout, if it exists. 
+# file ~/.bash_logout, if it exists.
 
 # If not running interactively, don't do anything
 [ -z "$PS1" ] && return
@@ -28,7 +28,7 @@ MACH=`uname -m`
 #elif [ "${OS}" = "AIX" ] ; then
 
 if [ "${OS}" == "Linux" ] ; then
-    
+
     #-----------------------------------
     # Source global definitions (if any)
     #-----------------------------------
@@ -44,7 +44,7 @@ fi
 # now override with customizations
 
 # Don't want any coredumps
-ulimit -S -c 0		
+ulimit -S -c 0
 
 # notify of bg job completion immediately
 set -o notify
@@ -57,7 +57,7 @@ set -o noclobber
 # set -o nounset
 
 # useful for debugging:
-# set -o xtrace          
+# set -o xtrace
 
 # Enable options:
 shopt -s cdspell
@@ -109,6 +109,23 @@ shopt -s checkwinsize
 
 # make less more friendly for non-text input files, see lesspipe(1)
 [ -x /usr/bin/lesspipe ] && eval "$(SHELL=/bin/sh lesspipe)"
+
+if [ -x `which pbcopy` ]; then
+    echo `which pbcopy`;
+    # do nothing
+elif [ -x `which xsel`]; then
+    alias pbcopy='xsel --clipboard --input'
+    alias pbpaste='xsel --clipboard --output'
+elif [ -x `which xclip` ]; then
+    # or with xclip :
+    alias pbcopy='xclip -selection clipboard'
+    alias pbpaste='xclip -selection clipboard -o'
+fi
+
+[ -x /opt/tfs-git/git-tf ] && alias gittf=/opt/tfs-git/git-tf
+
+# [ -x /usr/bin/emacs ] && alias sems="/usr/bin/emacs --no-desktop --daemon"
+# [ -x `which emacsclient` ] && alias kems="`which emacsclient` -e '(kill-emacs)'"
 
 # enable en_US locale w/ utf-8 encodings if not already configured
 : ${LANG:="en_US.UTF-8"}
@@ -172,7 +189,9 @@ if shopt -q login_shell; then
 
     # OS-specific settings
     if [ "${OS}" == "Linux" ]; then
-        
+
+        alias open="xdg-open"
+
         # set variable identifying the chroot you work in (used in the prompt below)
         if [ -z "$debian_chroot" ] && [ -r /etc/debian_chroot ]; then
 	    debian_chroot=$(cat /etc/debian_chroot)
@@ -227,25 +246,25 @@ if shopt -q login_shell; then
 	            PS1="[\A - \$LOAD]\n[\h \#] \w > " ;;
 	    esac
         }
-        
+
         # this is the default prompt - might be slow. If too slow, use
         # fastprompt instead....
         unset color_prompt force_color_prompt
-        powerprompt  
+        powerprompt
 
     elif [ "${OS}" == "Darwin" ]; then
-        
+
         #echo "Setting Darwin-specific aliases ..."
         # Perl DBD:mysql needs a little help and to be told to use the 64-bit version
         # to match the 64-bit version of mysql and the 64-bin version of the module
         export DYLD_LIBRARY_PATH="/usr/local/mysql/lib:$DYLD_LIBRARY_PATH"
         export VERSIONER_PERL_PREFER_32_BIT=no
-        
+
         export JAVA_HOME=`/usr/libexec/java_home -v 1.7`
         export PATH="${JAVA_HOME}/bin:/usr/local/mysql/bin:${PATH}"
         export CLASSPATH="${JAVA_HOME}/lib:${JAVA_HOME}/jre/lib"
-        
-        function apple_update_terminal_cwd() 
+
+        function apple_update_terminal_cwd()
         {
 	    # Identify the directory using a "file:" scheme URL,
 	    # including the host name to disambiguate local vs.
@@ -259,7 +278,7 @@ if shopt -q login_shell; then
         alias ls='ls -G'
         alias ed='/usr/local/bin/mate -w'
         alias ij='"/Applications/IntelliJ IDEA 12.app/Contents/MacOS/idea"'
-        alias myip='ipconfig getifaddr en0'
+        alias myip='ipconfig getifaddr en0 | pbcopy'
 
         PS1='\h:\W \u$ '
 
@@ -271,5 +290,3 @@ if shopt -q login_shell; then
     fi
 
 fi
-
-cd ~
