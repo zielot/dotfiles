@@ -1,5 +1,73 @@
-# Some useful aliases.
+#!/bin/bash
 
+#. ~/.ssh_aliases
+
+
+_bash_history_sync() {
+    builtin history -a         #1
+    HISTFILESIZE=$HISTSIZE     #2
+    builtin history -c         #3
+    builtin history -r         #4
+}
+
+history() {                  #5
+    _bash_history_sync
+    builtin history "$@"
+}
+
+PROMPT_COMMAND=_bash_history_sync
+
+# for WSL 2
+# export DISPLAY=$(cat /etc/resolv.conf | grep nameserver | awk '{print $2; exit;}'):0.0
+# for WSL 1
+# export DISPLAY=127.0.0.1:0.0
+
+# wsl particulars
+# test if wsl?
+# alias vpnon='
+# wsl.exe -d wsl-vpnkit --cd /app service wsl-vpnkit status >/dev/null || \
+# wsl.exe -d wsl-vpnkit --cd /app service wsl-vpnkit start
+# '
+# alias vpnoff='
+# wsl.exe -d wsl-vpnkit --cd /app service wsl-vpnkit stop
+# '
+# alias netstatus='
+# wsl.exe -d wsl-vpnkit --cd /app service wsl-vpnkit status
+# '
+
+# for Visual Studio Code
+alias code="${USERPROFILE}/AppData/Local/Programs/Microsoft\ VS\ Code/bin/code"
+
+alias vi=vim
+
+# for emacs
+export ALTERNATE_EDITOR=""
+
+alias emt='
+/usr/bin/emacsclient -n -nw -c $1 
+'
+
+alias em='
+export LIBGL_ALWAYS_INDIRECT=1
+/usr/bin/emacsclient -n -c \"$1\" -a \"\"
+'
+
+# emacs 
+# alias killemacs="emacsclient -e '(shutdown-emacs-server)'"
+# Nihongo MicroGnuEmacs
+# alias e="ng"
+# alias e="openwithemacs"
+
+# alias kems="emacsclient -e '(kill-emacs)'"
+# alias sems="/usr/bin/emacs --no-desktop --daemon"
+# alias killemacs="emacsclient -e '(shutdown-emacs-server)'"
+
+#Nihongo MicroGnuEmacs
+#alias e="ng"
+#alias e="openwithemacs"
+
+
+# Some useful aliases.
 alias texclean='rm -f *.toc *.aux *.log *.cp *.fn *.tp *.vr *.pg *.ky'
 alias clean='echo -n "Really clean this directory? ";
 	read yorn;
@@ -32,20 +100,19 @@ alias j="jobs -l"
 alias ll='ls -l'
 alias la='ls -A'
 alias l='ls -ltrA'
-alias ll="ls -l"
 alias dot='ls .[a-zA-Z0-9_]*'
 
 ## get rid of command not found ##
-alias cd..='cd ..'
+#alias cd..='cd ..'
  
 ## a quick way to get out of current directory ##
-alias .='cd ..'
-alias ..='cd ../../'
-alias ...='cd ../../../'
-alias ....='cd ../../../../'
-alias .....='cd ../../../../..'
-alias .4='cd ../../../../'
-alias .5='cd ../../../../..'
+# alias .='cd ..'
+# alias ..='cd ../../'
+# alias ...='cd ../../../'
+# alias ....='cd ../../../../'
+# alias .....='cd ../../../../..'
+# alias .4='cd ../../../../'
+# alias .5='cd ../../../../..'
 
 alias ts='date +"%Y%m%d%H%M%S"'
 alias ds='date +"%Y%m%d"'
@@ -58,26 +125,41 @@ alias alert='notify-send --urgency=low -i "$([ $? = 0 ] && echo terminal || echo
 # Csh compatability:
 alias unsetenv=unset
 
-# emacs 
-# alias killemacs="emacsclient -e '(shutdown-emacs-server)'"
-# Nihongo MicroGnuEmacs
-# alias e="ng"
-# alias e="openwithemacs"
-
-# These don't work, yet
-alias htmlencode="perl -MHTML::Entities -pe 'encode_entities($1)'"
-alias htmldecode="perl -MHTML::Entities -pe 'decode_entities($1)'"
-
-# alias kems="emacsclient -e '(kill-emacs)'"
-# alias sems="/usr/bin/emacs --no-desktop --daemon"
-# alias killemacs="emacsclient -e '(shutdown-emacs-server)'"
-
-#Nihongo MicroGnuEmacs
-#alias e="ng"
-#alias e="openwithemacs"
-
 # functions
 alias fx='declare -F'
+
+
+function randprint() 
+{
+    cat /dev/urandom | LC_ALL=C tr -dc '[:print:]'| fold -w ${1} | head -n1
+}
+
+# use Bash RegEx parameter replacement to decode
+function urldecode() { local i="${*//+/ }"; echo -e "${i//%/\\x}"; }
+
+# from https://gist.github.com/cdown/1163649?permalink_comment_id=3625308#gistcomment-3625308
+function urlencode() { [[ "${1}" ]] || return 1; local LANG=C i x; for (( i = 0; i < ${#1}; i++ )); do x="${1:i:1}"; [[ "${x}" == [a-zA-Z0-9.~_-] ]] && echo -n "${x}" || printf '%%%02X' "'${x}"; done; echo; }
+
+# check password
+function chgpass()
+{
+    echo "Type in your password to check"
+    pwscore
+    read -n1 -r -p "Press any key to continue..." key
+    clear
+}
+
+# dictionary
+function dl()
+{
+    dict "$1" | less
+}
+
+function yelpman()
+{
+    setsid yelp "man:$1"
+}
+
 
 ### Functions
 function gman() 
@@ -87,10 +169,12 @@ function gman()
     # *ERROR*: WoMan can only format man pages written with the usual `-man' macros
     # Done displaying WoMan file.
 
-    if /usr/bin/emacsclient -e "(woman \"$1\")"; then 
-        echo "Now displaying WoMan $1.";
-    # elif yelp 'man:$1'; then 
-    #     echo "Done displaying yelp \"man:$1.\""; 
+    # if /usr/bin/emacsclient -e "(woman \"$1\")"; then 
+    #     echo "Now displaying WoMan $1.";
+
+    if [[ -n "$(command -v yelp)" ]];then
+        yelpman $1
+        echo "Displaying yelp \"man:$1.\""; 
     else
         man "$1";
     fi 
@@ -193,7 +277,8 @@ function dm()
 }
 
 # apt aliases.
-alias dl="dpkg -L"
+alias listdeb="dpkg -L"
+
 finddeb()
 {
     aptitude search "$1" | sort -u | less 
@@ -235,9 +320,9 @@ _seq ()
 watch()
 {
     if [ $# -ne 1 ] ; then
-	tail -f nohup.out
+	    tail -f nohup.out
     else
-	tail -f $1
+	    tail -f $1
     fi
 }
 
@@ -277,3 +362,24 @@ unbold()
 }
 
 
+join-lines()
+{
+    sed -e '
+:1
+/\\$/{N
+  s/\n//              
+  t1
+}
+/\\/!d 
+s/\\[[:blank:]]*//g
+' $1
+}
+
+
+# for use with the (mini)conda package manager 
+# from anaconda
+# alias cel='conda env list'
+# alias cea='conda activate '
+# alias ced='conda deactivate '
+alias web='google-chrome &'
+alias files='exec nohup nautilus 2>&1 &'
